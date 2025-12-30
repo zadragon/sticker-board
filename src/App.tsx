@@ -4,7 +4,6 @@ import { auth } from "./api/firebase";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
 import Layout from "./components/Layout";
-import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ParentDashboard from "./pages/ParentDashboard";
