@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Box,
@@ -18,41 +18,79 @@ import { doc, getDoc } from "firebase/firestore";
 const PinCheckPage = () => {
   const [pin, setPin] = useState("");
   const navigate = useNavigate();
+  const [isVerifying, setIsVerifying] = useState(false);
 
-  // 1. 검증 함수에서 async/await를 사용하여 상태 업데이트와 분리
-  const verifyPin = async (inputPin: string) => {
-    if (!auth.currentUser) return;
+  // 1. PIN 검증 함수 (useCallback 내부에 불필요한 isVerifying 의존성 제거)
+  const verifyPin = useCallback(
+    async (inputPin: string) => {
+      // 이미 검증 중이거나 4자리가 아니면 중단
+      if (isVerifying || inputPin.length !== 4) return;
 
-    try {
-      const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
-      if (userDoc.exists() && userDoc.data().parentPin === inputPin) {
-        sessionStorage.setItem("isParentAuthenticated", "true");
-        navigate("/parent-dashboard");
-      } else {
-        alert("PIN 번호가 일치하지 않습니다.");
-        setPin(""); // 여기에서의 상태 업데이트는 이제 사용자 이벤트 핸들러 흐름 안에 있어 안전합니다.
+      setIsVerifying(true);
+      try {
+        const userDoc = await getDoc(doc(db, "users", auth.currentUser!.uid));
+        if (userDoc.exists() && userDoc.data().parentPin === inputPin) {
+          sessionStorage.setItem("isParentAuthenticated", "true");
+          navigate("/parent-dashboard");
+        } else {
+          alert("PIN 번호가 일치하지 않습니다.");
+          setPin(""); // 입력 초기화
+        }
+      } catch (error) {
+        console.error("PIN 확인 에러:", error);
+      } finally {
+        // 약간의 지연을 주어 상태가 확실히 변한 뒤에 풀리도록 함
+        setTimeout(() => setIsVerifying(false), 300);
       }
-    } catch (error) {
-      console.error("PIN 확인 에러:", error);
+    },
+    [navigate] // isVerifying을 의존성에서 빼야 최신 로직 유지 가능
+  );
+
+  // 2. PIN이 4자리가 되었을 때만 실행되는 Effect
+  useEffect(() => {
+    if (pin.length === 4 && !isVerifying) {
+      // 사용자가 마지막 숫자가 채워지는 것을 볼 수 있도록 약간의 지연 후 실행
+      const timer = setTimeout(() => {
+        verifyPin(pin);
+      }, 100);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [pin, verifyPin, isVerifying]);
 
-  // 2. 숫자를 클릭할 때마다 길이를 체크하여 4자리가 되면 바로 실행
-  const handleNumberClick = (num: string) => {
-    if (pin.length < 4) {
-      const newPin = pin + num;
-      setPin(newPin);
+  const handleNumberClick = useCallback(
+    (num: string) => {
+      // 검증 중에는 추가 입력 방지
+      if (isVerifying) return;
 
-      // 4자리가 완성된 시점에 바로 검증 함수 호출
-      if (newPin.length === 4) {
-        verifyPin(newPin);
-      }
-    }
-  };
+      setPin(prev => {
+        if (prev.length < 4) {
+          return prev + num;
+        }
+        return prev;
+      });
+    },
+    [isVerifying]
+  );
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     setPin(prev => prev.slice(0, -1));
-  };
+  }, []);
+
+  // 물리 키보드 이벤트 리스너 등록
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.repeat) return; // 키를 꾹 누르고 있을 때 발생하는 중복 이벤트 무시
+
+      if (/^[0-9]$/.test(e.key)) {
+        handleNumberClick(e.key);
+      } else if (e.key === "Backspace") {
+        handleDelete();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleNumberClick, handleDelete]);
 
   return (
     <Container maxWidth="xs">

@@ -82,6 +82,7 @@ const LoginPage = () => {
             fullWidth
             label="이메일 주소"
             autoFocus
+            type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             variant="outlined"
