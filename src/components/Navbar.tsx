@@ -12,18 +12,24 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
 import FaceIcon from "@mui/icons-material/Face";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../api/firebase";
 import { logoutUser } from "../api/auth";
+import { useAuth } from "../hooks/useAuth"; // useAuth 훅 임포트
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const user = auth.currentUser;
+  const { user } = useAuth();
 
   const handleLogout = async () => {
     if (window.confirm("로그아웃 하시겠습니까?")) {
-      await logoutUser();
-      sessionStorage.removeItem("isParentAuthenticated");
-      navigate("/");
+      try {
+        await logoutUser();
+        // 세션 삭제를 먼저 확실히 수행
+        sessionStorage.removeItem("isParentAuthenticated");
+        // 로그인 페이지나 메인으로 이동
+        navigate("/", { replace: true });
+      } catch (error) {
+        console.error("로그아웃 실패:", error);
+      }
     }
   };
 
