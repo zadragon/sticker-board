@@ -43,7 +43,7 @@ const PinCheckPage = () => {
         setTimeout(() => setIsVerifying(false), 300);
       }
     },
-    [navigate] // isVerifying을 의존성에서 빼야 최신 로직 유지 가능
+    [isVerifying, navigate] // isVerifying을 의존성에서 빼야 최신 로직 유지 가능
   );
 
   // 2. PIN이 4자리가 되었을 때만 실행되는 Effect

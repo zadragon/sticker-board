@@ -12,6 +12,7 @@ import PinCheckPage from "./pages/PinCheckPage";
 import CreateBoard from "./pages/CreateBoard";
 import EditBoard from "./pages/EditBoard";
 import HistoryPage from "./pages/HistoryPage";
+import ParentAuthRoute from "./components/ParentAuthRoute";
 
 const theme = createTheme({
   palette: {
@@ -60,7 +61,14 @@ function App() {
             <Route path="/parent-auth" element={<PinCheckPage />} />
 
             {/* PIN 확인 완료 후 접근 가능한 대시보드 */}
-            <Route path="/parent-dashboard" element={<ParentDashboard />} />
+            <Route
+              path="/parent-dashboard"
+              element={
+                <ParentAuthRoute>
+                  <ParentDashboard />
+                </ParentAuthRoute>
+              }
+            />
             <Route path="/create-board" element={<CreateBoard />} />
             <Route path="/edit-board/:id" element={<EditBoard />} />
             <Route path="/history" element={<HistoryPage />} />

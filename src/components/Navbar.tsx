@@ -21,6 +21,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     if (window.confirm("로그아웃 하시겠습니까?")) {
+      sessionStorage.removeItem("isParentAuthenticated");
       await logoutUser();
       navigate("/");
     }
@@ -72,10 +73,10 @@ const Navbar = () => {
                 variant="outlined"
                 size="small"
                 startIcon={<SettingsIcon />}
-                onClick={() => navigate("/parent-auth")}
+                onClick={() => navigate("/parent-dashboard")}
                 sx={{ borderRadius: 5, mr: 1 }}
               >
-                부모모드
+                부모님 모드
               </Button>
             </Tooltip>
 
