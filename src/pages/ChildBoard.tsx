@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { db, auth } from "../api/firebase";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import {
@@ -12,8 +12,18 @@ import {
 } from "@mui/material";
 import confetti from "canvas-confetti";
 
+interface StickerBoard {
+  id: string;
+  uid: string;
+  title: string;
+  currentCount: number;
+  totalSlots: number;
+  stickerImg: string;
+  status: string;
+}
+
 const ChildBoard = () => {
-  const [boards, setBoards] = useState<any[]>([]);
+  const [boards, setBoards] = useState<StickerBoard[]>([]);
   const [loading, setLoading] = useState(true);
 
   // 폭죽 효과 함수 통합 및 강화
@@ -32,6 +42,7 @@ const ChildBoard = () => {
       const animationEnd = Date.now() + duration;
       const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const interval: any = setInterval(() => {
         const timeLeft = animationEnd - Date.now();
         if (timeLeft <= 0) return clearInterval(interval);
@@ -67,7 +78,7 @@ const ChildBoard = () => {
     const unsubscribe = onSnapshot(q, snapshot => {
       const boardList = snapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data(),
+        ...(doc.data() as Omit<StickerBoard, "id">), // id를 제외한 나머지를 StickerBoard 타입으로 캐스팅
       }));
 
       boardList.forEach(board => {
@@ -144,7 +155,7 @@ const ChildBoard = () => {
               {Array.from({ length: board.totalSlots }).map((_, index) => {
                 const isFilled = index < board.currentCount;
                 return (
-                  <Grid item key={index}>
+                  <div key={index}>
                     <Box
                       sx={{
                         width: { xs: 55, sm: 70 },
@@ -177,7 +188,7 @@ const ChildBoard = () => {
                         />
                       )}
                     </Box>
-                  </Grid>
+                  </div>
                 );
               })}
             </Grid>

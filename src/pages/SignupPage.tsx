@@ -8,7 +8,6 @@ import {
   TextField,
   Button,
   Paper,
-  Grid,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
@@ -32,8 +31,9 @@ const SignupPage = () => {
       await signUpUser(email, password, parentPin);
       alert("가족 계정 생성이 완료되었습니다!");
       navigate("/"); // 로그인 페이지로 이동
-    } catch (err: any) {
-      alert("회원가입 실패: " + err.message);
+    } catch (err) {
+      console.log("🚀 ~ handleSignup ~ err:", err);
+      alert("회원가입 실패: " + err);
     }
   };
 

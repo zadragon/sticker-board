@@ -17,11 +17,23 @@ import {
   Avatar,
   Chip,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 
+// 1. 타입 정의 추가
+interface ArchivedBoard {
+  id: string;
+  title: string;
+  stickerImg: string;
+  totalSlots: number;
+  completedAt?: {
+    toDate: () => Date;
+  };
+}
+
 const HistoryPage = () => {
-  const [archivedBoards, setArchivedBoards] = useState<any[]>([]);
+  const [archivedBoards, setArchivedBoards] = useState<ArchivedBoard[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,13 +48,36 @@ const HistoryPage = () => {
     );
 
     const unsubscribe = onSnapshot(q, snapshot => {
-      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const list = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...(doc.data() as Omit<ArchivedBoard, "id">),
+      }));
       setArchivedBoards(list);
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "60vh",
+          gap: 2,
+        }}
+      >
+        <CircularProgress size={60} thickness={4} />
+        <Typography color="text.secondary">
+          기록을 불러오고 있어요...
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Container maxWidth="md" sx={{ width: "100%", m: 0 }}>
@@ -73,7 +108,14 @@ const HistoryPage = () => {
       ) : (
         <Grid container spacing={3}>
           {archivedBoards.map(board => (
-            <Grid item xs={12} sm={6} key={board.id}>
+            <div
+              key={board.id}
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
               <Card
                 sx={{
                   borderRadius: 4,
@@ -135,7 +177,7 @@ const HistoryPage = () => {
                   </Box>
                 </CardContent>
               </Card>
-            </Grid>
+            </div>
           ))}
         </Grid>
       )}

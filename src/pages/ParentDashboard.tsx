@@ -20,14 +20,23 @@ import {
   CardContent,
   LinearProgress,
   Stack,
-  Divider,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useNavigate } from "react-router-dom";
 
+interface StickerBoard {
+  id: string;
+  uid: string;
+  title: string;
+  currentCount: number;
+  totalSlots: number;
+  stickerImg: string;
+  status: string;
+}
+
 const ParentDashboard = () => {
-  const [boards, setBoards] = useState<any[]>([]);
+  const [boards, setBoards] = useState<StickerBoard[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -64,7 +73,7 @@ const ParentDashboard = () => {
     const unsubscribe = onSnapshot(q, snapshot => {
       const boardList = snapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data(),
+        ...(doc.data() as Omit<StickerBoard, "id">),
       }));
       setBoards(boardList);
       setLoading(false);
@@ -144,7 +153,7 @@ const ParentDashboard = () => {
 
       <Grid container spacing={3}>
         {boards.map(board => (
-          <Grid item xs={12} md={6} key={board.id}>
+          <div key={board.id}>
             <Card sx={{ borderRadius: 3, position: "relative" }}>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -188,7 +197,6 @@ const ParentDashboard = () => {
                   >
                     떼기
                   </Button>
-                  <Divider orientation="vertical" flexItem />
                   {/* 수정 페이지로 이동할 때 ID를 넘김 */}
                   <Button
                     size="small"
@@ -218,7 +226,7 @@ const ParentDashboard = () => {
                 )}
               </CardContent>
             </Card>
-          </Grid>
+          </div>
         ))}
       </Grid>
 

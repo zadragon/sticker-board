@@ -26,6 +26,7 @@ const LoginPage = () => {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/");
     } catch (err) {
+      console.log("🚀 ~ handleLogin ~ err:", err);
       setError("이메일 또는 비밀번호를 확인해주세요.");
     }
   };
