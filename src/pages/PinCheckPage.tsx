@@ -47,7 +47,7 @@ const PinCheckPage = () => {
 
   // PIN이 6자리가 되면 자동으로 확인 로직 실행
   useEffect(() => {
-    if (pin.length === 6) {
+    if (pin.length === 4) {
       handleVerify();
     }
   }, [pin]);
@@ -69,12 +69,12 @@ const PinCheckPage = () => {
           부모님 인증
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-          설정하신 6자리 PIN 번호를 입력하세요.
+          설정하신 4자리 PIN 번호를 입력하세요.
         </Typography>
 
         {/* PIN 표시란 (동그라미 형태) */}
         <Box sx={{ display: "flex", gap: 2, mb: 5 }}>
-          {[...Array(6)].map((_, i) => (
+          {[...Array(4)].map((_, i) => (
             <Box
               key={i}
               sx={{
@@ -89,8 +89,8 @@ const PinCheckPage = () => {
         </Box>
 
         {/* 숫자 키패드 */}
-        <Paper elevation={0} sx={{ bgcolor: "transparent", width: "100%" }}>
-          <Grid container spacing={2}>
+        <Paper elevation={0} sx={{ bgcolor: "transparent", width: "70%" }}>
+          <Grid container spacing={2} sx={{ justifyContent: "center" }}>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0].map((val, index) => (
               <Grid item xs={4} key={index}>
                 {val !== "" ? (

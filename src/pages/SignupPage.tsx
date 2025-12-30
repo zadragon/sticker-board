@@ -22,8 +22,8 @@ const SignupPage = () => {
     e.preventDefault();
 
     // 유효성 검사
-    if (parentPin.length !== 6) {
-      alert("부모님 확인용 PIN은 숫자 6자리로 입력해주세요.");
+    if (parentPin.length !== 4) {
+      alert("부모님 확인용 PIN은 숫자 4자리로 입력해주세요.");
       return;
     }
 
@@ -82,18 +82,27 @@ const SignupPage = () => {
                 color="secondary.dark"
                 sx={{ display: "flex", alignItems: "center", gap: 1 }}
               >
-                <LockOutlinedIcon fontSize="small" /> 부모님 인증 PIN (6자리
+                <LockOutlinedIcon fontSize="small" /> 부모님 인증 PIN (4자리
                 숫자)
               </Typography>
               <TextField
                 fullWidth
                 variant="standard"
-                placeholder="000000"
+                placeholder="0000"
                 sx={{ mt: 1 }}
                 value={parentPin}
                 onChange={e =>
                   setParentPin(e.target.value.replace(/[^0-9]/g, ""))
                 }
+                inputProps={{
+                  maxLength: 4,
+                  inputMode: "numeric",
+                  style: {
+                    textAlign: "center",
+                    fontSize: "1.5rem",
+                    letterSpacing: "10px",
+                  },
+                }}
               />
             </Box>
 
