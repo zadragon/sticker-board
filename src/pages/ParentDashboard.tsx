@@ -24,6 +24,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 interface StickerBoard {
   id: string;
@@ -38,6 +39,7 @@ interface StickerBoard {
 const ParentDashboard = () => {
   const [boards, setBoards] = useState<StickerBoard[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const archiveBoard = async (boardId: string) => {
@@ -144,7 +146,7 @@ const ParentDashboard = () => {
       </Stack>
       <Stack direction="row" spacing={2} mb={3}>
         <Button variant="contained" onClick={() => navigate("/create-board")}>
-          +
+          +추가하기
         </Button>
         <Button variant="contained" onClick={() => navigate("/history")}>
           기록 보관소
@@ -233,6 +235,11 @@ const ParentDashboard = () => {
       {boards.length === 0 && (
         <Typography align="center" sx={{ mt: 5 }}>
           아직 판이 없습니다. 새로 만들어보세요!
+          {user?.isAnonymous && (
+            <small style={{ display: "block", textAlign: "center" }}>
+              "익명사용자일경우 저장된 칭찬판을 잃어버릴수있습니다"
+            </small>
+          )}
         </Typography>
       )}
     </Box>

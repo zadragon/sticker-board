@@ -13,6 +13,7 @@ import {
   Avatar,
 } from "@mui/material";
 import StarsIcon from "@mui/icons-material/Stars";
+import { loginAnonymously } from "../api/auth";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -28,6 +29,16 @@ const LoginPage = () => {
     } catch (err) {
       console.log("🚀 ~ handleLogin ~ err:", err);
       setError("이메일 또는 비밀번호를 확인해주세요.");
+    }
+  };
+
+  const handleStart = async () => {
+    try {
+      await loginAnonymously();
+      navigate("/"); // 메인 페이지(칭찬판)로 이동
+    } catch (err) {
+      console.log("🚀 ~ handleStart ~ err:", err);
+      alert("접속에 실패했습니다.");
     }
   };
 
@@ -102,6 +113,10 @@ const LoginPage = () => {
               {error}
             </Alert>
           )}
+
+          <Button onClick={handleStart} variant="contained" fullWidth>
+            로그인 없이 바로 시작하기
+          </Button>
 
           <Button
             type="submit"

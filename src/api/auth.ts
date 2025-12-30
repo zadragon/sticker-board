@@ -1,6 +1,12 @@
 // src/api/auth.ts
 import { auth, db } from "./firebase";
-import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signOut,
+  signInAnonymously,
+  linkWithCredential,
+  EmailAuthProvider,
+} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 
 /**
@@ -37,6 +43,30 @@ export const logoutUser = async () => {
     await signOut(auth);
   } catch (error) {
     console.error("로그아웃 에러:", error);
+    throw error;
+  }
+};
+
+export const loginAnonymously = async () => {
+  try {
+    const result = await signInAnonymously(auth);
+    console.log("익명 로그인 성공:", result.user.uid);
+    return result.user;
+  } catch (error) {
+    console.error("익명 로그인 실패:", error);
+    throw error;
+  }
+};
+
+export const linkAnonymousToEmail = async (email: string, pass: string) => {
+  if (!auth.currentUser) throw new Error("로그인된 사용자가 없습니다.");
+
+  const credential = EmailAuthProvider.credential(email, pass);
+  try {
+    const result = await linkWithCredential(auth.currentUser, credential);
+    return result.user;
+  } catch (error) {
+    console.error("계정 연동 에러:", error);
     throw error;
   }
 };

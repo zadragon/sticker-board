@@ -161,16 +161,19 @@ const ChildBoard = () => {
                         width: { xs: 55, sm: 70 },
                         height: { xs: 55, sm: 70 },
                         borderRadius: "15px",
-                        border: "2px dashed #e0e0e0",
+                        border: isFilled
+                          ? "2px solid #FFD700"
+                          : "2px dashed #e0e0e0", // 채워지면 테두리 강조
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        bgcolor: isFilled ? "white" : "#fcfcfc",
+                        bgcolor: isFilled ? "#fff9db" : "#fcfcfc", // 배경색 변화
                         transition: "all 0.3s ease",
+                        position: "relative",
+                        overflow: "hidden",
                         boxShadow: isFilled
                           ? "0 4px 10px rgba(0,0,0,0.1)"
                           : "none",
-                        transform: isFilled ? "scale(1.05)" : "none",
                       }}
                     >
                       {isFilled && (
@@ -178,12 +181,25 @@ const ChildBoard = () => {
                           component="img"
                           src={board.stickerImg}
                           alt="sticker"
+                          key={`sticker-${index}`} // 🌟 중요: 이 키가 있어야 추가될 때 애니메이션이 작동함
                           sx={{
                             width: "85%",
                             height: "85%",
                             objectFit: "contain",
+                            // 🌟 SX 속성 안에 직접 애니메이션 정의
                             animation:
-                              "popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                              "popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                            "@keyframes popIn": {
+                              "0%": {
+                                transform: "scale(0) rotate(-45deg)",
+                                opacity: 0,
+                              },
+                              "70%": { transform: "scale(1.2) rotate(10deg)" },
+                              "100%": {
+                                transform: "scale(1) rotate(0)",
+                                opacity: 1,
+                              },
+                            },
                           }}
                         />
                       )}

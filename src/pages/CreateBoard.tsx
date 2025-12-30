@@ -19,7 +19,7 @@ const CreateBoard = () => {
   const [title, setTitle] = useState("");
   const [totalSlots, setTotalSlots] = useState(20);
   const [stickerImg, setStickerImg] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [previewUrl, setPreviewUrl] = useState<string>("/party.png");
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
@@ -38,8 +38,7 @@ const CreateBoard = () => {
     setUploading(true);
 
     try {
-      let finalStickerUrl =
-        "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"; // 기본값
+      let finalStickerUrl = "/party.png"; // 기본값
 
       // 1. 이미지가 선택되었다면 Storage에 업로드
       if (stickerImg) {
@@ -94,6 +93,15 @@ const CreateBoard = () => {
             <Typography variant="subtitle1" sx={{ mb: 2 }}>
               스티커 이미지 등록
             </Typography>
+            {previewUrl && (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+                <Avatar
+                  src={previewUrl}
+                  sx={{ width: 80, height: 80, border: "2px solid #4dabf7" }}
+                />
+              </Box>
+            )}
+            <p>Icons made by Pixel perfect from www.flaticon.com</p>
             <input
               accept="image/*"
               style={{ display: "none" }}
@@ -111,15 +119,6 @@ const CreateBoard = () => {
                 이미지 선택
               </Button>
             </label>
-
-            {previewUrl && (
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
-                <Avatar
-                  src={previewUrl}
-                  sx={{ width: 80, height: 80, border: "2px solid #4dabf7" }}
-                />
-              </Box>
-            )}
           </Box>
 
           <Typography gutterBottom>스티커 개수: {totalSlots}개</Typography>
